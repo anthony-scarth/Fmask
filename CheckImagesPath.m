@@ -15,6 +15,7 @@ function [num_all_images, sensors, paths, info_count_text] = CheckImagesPath(pat
     num_L8_oli_tirs = 0;
     num_S2A_msi = 0;
     num_S2B_msi = 0;
+    num_S2C_msi = 0;
     
     % key info: the senor and path are needed as outputs, the first one is
     % to determine the default parameters for Fmask, and the second one is
@@ -56,6 +57,13 @@ function [num_all_images, sensors, paths, info_count_text] = CheckImagesPath(pat
                 else
                     cimage_sensor = [];% no available Sentinel 2 data.
                 end
+            case {'Sentinel 2C MSI'}
+                % see there is .SAFE.
+                if contains(cimage_path,'.SAFE')
+                    num_S2C_msi=num_S2C_msi+1;
+                else
+                    cimage_sensor = [];% no available Sentinel 2 data.
+                end
         end
         if ~isempty(cimage_sensor)
             sensors = [sensors;{cimage_sensor}];
@@ -74,7 +82,8 @@ function [num_all_images, sensors, paths, info_count_text] = CheckImagesPath(pat
             isequal(num_all_images,num_L7_tm_plus)||...
             isequal(num_all_images,num_L8_oli_tirs)||...
             isequal(num_all_images,num_S2A_msi)||...
-            isequal(num_all_images,num_S2B_msi)
+            isequal(num_all_images,num_S2B_msi)||...
+            isequal(num_all_images,num_S2C_msi)
        % only for 1 type image
         if num_L4_tm > 0
         text_line = text_line+1;
@@ -110,6 +119,11 @@ function [num_all_images, sensors, paths, info_count_text] = CheckImagesPath(pat
             text_line = text_line+1;
             info_count_text{text_line} = sprintf('%s Sentinel 2B MSI images are found at ''%s''\n',...
                 num2str(num_S2B_msi),path_data);
+        end
+        if num_S2C_msi > 0
+            text_line = text_line+1;
+            info_count_text{text_line} = sprintf('%s Sentinel 2C MSI images are found at ''%s''\n',...
+                num2str(num_S2C_msi),path_data);
         end
     else
          text_line = text_line+1;
@@ -150,6 +164,11 @@ function [num_all_images, sensors, paths, info_count_text] = CheckImagesPath(pat
             text_line = text_line+1;
             info_count_text{text_line} = sprintf('%s Sentinel 2B MSI images\n',...
                 num2str(num_S2B_msi));
+        end
+        if num_S2C_msi > 0
+            text_line = text_line+1;
+            info_count_text{text_line} = sprintf('%s Sentinel 2C MSI images\n',...
+                num2str(num_S2C_msi));
         end
     end
     
